@@ -9,7 +9,7 @@ namespace JwtAuthMinimalApi.Services
         /// </summary>
         /// <param name="username">Username for whom the token is generated</param>
         /// <returns>Signed JWT token string</returns>
-        string GenerateToken(string username, string password);
+        string GenerateToken(string username);
 
         /// <summary>
         /// Validates the given JWT token and returns the principal if valid.

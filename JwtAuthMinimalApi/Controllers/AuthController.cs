@@ -25,7 +25,7 @@ namespace JwtAuthMinimalApi.Controllers
 
             if (request.Username == "admin" && request.Password == "1234")
             {
-                var token = _jwtTokenGenerator.GenerateToken(request.Username, request.Password);
+                var token = _jwtTokenGenerator.GenerateToken(request.Username);
                 return Ok(new { Token = token });
             }
 

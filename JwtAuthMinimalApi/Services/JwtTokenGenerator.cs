@@ -27,17 +27,14 @@ namespace JwtAuthMinimalApi.Services
         /// </summary>
         /// <param name="username">Username for whom the token is generated</param>
         /// <returns>Signed JWT token string</returns>
-        public string GenerateToken(string username, string password)
+        public string GenerateToken(string username)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var encodedPassword = Convert.ToBase64String(Encoding.UTF8.GetBytes(password));
-
             var claims = new[]
             {
         new Claim(JwtRegisteredClaimNames.Sub, username),
-        new Claim("password", encodedPassword),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
