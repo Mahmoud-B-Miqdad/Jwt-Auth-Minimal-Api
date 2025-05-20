@@ -7,14 +7,20 @@ namespace JwtAuthMinimalApi.Services
 {
     /// <summary>
     /// Responsible for generating and validating JWT tokens.
+    /// Uses symmetric key signing with HMAC SHA256 algorithm.
     /// </summary>
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly string _secretKey;
-
         private readonly string _issuer;
         private readonly string _audience;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="JwtTokenGenerator"/> with specified secret key, issuer, and audience.
+        /// </summary>
+        /// <param name="secretKey">The secret key used for signing the token.</param>
+        /// <param name="issuer">The issuer of the token.</param>
+        /// <param name="audience">The audience for which the token is intended.</param>
         public JwtTokenGenerator(string secretKey, string issuer, string audience)
         {
             _secretKey = secretKey;
@@ -23,10 +29,12 @@ namespace JwtAuthMinimalApi.Services
         }
 
         /// <summary>
-        /// Generates a JWT token for the given username.
+        /// Generates a signed JWT token for the specified username.
+        /// The token includes standard claims like subject and unique identifier,
+        /// and expires 1 hour after creation.
         /// </summary>
-        /// <param name="username">Username for whom the token is generated</param>
-        /// <returns>Signed JWT token string</returns>
+        /// <param name="username">The username for whom the token is generated.</param>
+        /// <returns>A signed JWT token string.</returns>
         public string GenerateToken(string username)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
@@ -34,9 +42,9 @@ namespace JwtAuthMinimalApi.Services
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, username),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var token = new JwtSecurityToken(
                 issuer: _issuer,
@@ -49,12 +57,15 @@ namespace JwtAuthMinimalApi.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-
         /// <summary>
-        /// Validates the given JWT token and returns the principal if valid.
+        /// Validates the specified JWT token and returns the claims principal if valid.
+        /// Validation includes checking issuer, audience, signing key, and token expiration.
+        /// Returns null if the token is invalid or expired.
         /// </summary>
-        /// <param name="token">JWT token string</param>
-        /// <returns>ClaimsPrincipal if valid, otherwise null</returns>
+        /// <param name="token">The JWT token string to validate.</param>
+        /// <returns>
+        /// A <see cref="ClaimsPrincipal"/> representing the token's claims if valid; otherwise, <c>null</c>.
+        /// </returns>
         public ClaimsPrincipal? ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -78,6 +89,7 @@ namespace JwtAuthMinimalApi.Services
             }
             catch
             {
+                // Token validation failed
                 return null;
             }
         }

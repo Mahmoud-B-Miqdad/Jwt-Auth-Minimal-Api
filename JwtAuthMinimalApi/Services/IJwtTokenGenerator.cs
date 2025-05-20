@@ -2,20 +2,25 @@
 
 namespace JwtAuthMinimalApi.Services
 {
+    /// <summary>
+    /// Defines methods to generate and validate JSON Web Tokens (JWT).
+    /// </summary>
     public interface IJwtTokenGenerator
     {
         /// <summary>
-        /// Generates a JWT token for the given username.
+        /// Generates a signed JWT token for the specified username.
         /// </summary>
-        /// <param name="username">Username for whom the token is generated</param>
-        /// <returns>Signed JWT token string</returns>
+        /// <param name="username">The username for whom the token will be generated.</param>
+        /// <returns>A signed JWT token string.</returns>
         string GenerateToken(string username);
 
         /// <summary>
-        /// Validates the given JWT token and returns the principal if valid.
+        /// Validates the specified JWT token and returns the associated claims principal if the token is valid.
         /// </summary>
-        /// <param name="token">JWT token string</param>
-        /// <returns>ClaimsPrincipal if valid, otherwise null</returns>
+        /// <param name="token">The JWT token string to validate.</param>
+        /// <returns>
+        /// A <see cref="ClaimsPrincipal"/> representing the token's claims if valid; otherwise, <c>null</c>.
+        /// </returns>
         ClaimsPrincipal? ValidateToken(string token);
     }
 }
