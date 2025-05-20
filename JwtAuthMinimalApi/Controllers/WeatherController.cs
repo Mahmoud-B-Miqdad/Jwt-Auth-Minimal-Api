@@ -7,7 +7,7 @@ namespace JwtAuthMinimalApi.Controllers
     /// Controller to test JWT authentication by providing a protected endpoint.
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/weather")]
     [Authorize] 
     public class WeatherController : ControllerBase
     {
