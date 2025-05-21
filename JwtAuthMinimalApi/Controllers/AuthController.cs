@@ -41,13 +41,15 @@ namespace JwtAuthMinimalApi.Controllers
                 return BadRequest("Username and password are required");
             }
 
-            if (_authorizationService.ValidateCredentials(request.Username, request.Password))
+            var result = _authorizationService.Login(request.Username, request.Password);
+
+            if (result.Success)
             {
-                var token = _jwtTokenGenerator.GenerateToken(request.Username);
-                return Ok(new { Token = token });
+                return Ok(new { Token = result.Token });
             }
 
             return Unauthorized("Invalid username or password");
         }
+
     }
 }

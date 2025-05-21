@@ -2,7 +2,6 @@
 {
     public interface IAuthorizationService
     {
-        bool ValidateCredentials(string username, string password);
+        (bool Success, string? Token) Login(string username, string password);
     }
-
 }
