@@ -12,7 +12,7 @@ var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
 
 builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
-builder.Services.AddSingleton(new JwtTokenGenerator(jwtSettings.Key, jwtSettings.Issuer, jwtSettings.Audience));
+builder.Services.AddSingleton(new JwtTokenGenerator(jwtSettings));
 
 builder.Services.AddAuthentication(options =>
 {

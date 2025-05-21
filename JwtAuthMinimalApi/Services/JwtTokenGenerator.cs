@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using JwtAuthMinimalApi.Configurations;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JwtAuthMinimalApi.Services
@@ -11,21 +12,15 @@ namespace JwtAuthMinimalApi.Services
     /// </summary>
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
-        private readonly string _secretKey;
-        private readonly string _issuer;
-        private readonly string _audience;
+        private readonly JwtSettings _jwtSettings;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="JwtTokenGenerator"/> with specified secret key, issuer, and audience.
+        /// Initializes a new instance of <see cref="JwtTokenGenerator"/> using the specified JWT settings.
         /// </summary>
-        /// <param name="secretKey">The secret key used for signing the token.</param>
-        /// <param name="issuer">The issuer of the token.</param>
-        /// <param name="audience">The audience for which the token is intended.</param>
-        public JwtTokenGenerator(string secretKey, string issuer, string audience)
+        /// <param name="jwtSettings">An object containing the secret key, issuer, and audience used for generating JWT tokens.</param>
+        public JwtTokenGenerator(JwtSettings jwtSettings)
         {
-            _secretKey = secretKey;
-            _issuer = issuer;
-            _audience = audience;
+            _jwtSettings = jwtSettings;
         }
 
         /// <summary>
@@ -37,7 +32,7 @@ namespace JwtAuthMinimalApi.Services
         /// <returns>A signed JWT token string.</returns>
         public string GenerateToken(string username)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -47,8 +42,8 @@ namespace JwtAuthMinimalApi.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials
@@ -69,16 +64,16 @@ namespace JwtAuthMinimalApi.Services
         public ClaimsPrincipal? ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_secretKey);
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
 
             try
             {
                 var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = _issuer,
+                    ValidIssuer = _jwtSettings.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = _audience,
+                    ValidAudience = _jwtSettings.Audience,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateLifetime = true,
