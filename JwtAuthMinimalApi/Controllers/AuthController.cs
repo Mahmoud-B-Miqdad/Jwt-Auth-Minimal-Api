@@ -11,14 +11,14 @@ namespace JwtAuthMinimalApi.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly JwtTokenGenerator _jwtTokenGenerator;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IAuthorizationService _authorizationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class.
         /// </summary>
         /// <param name="jwtTokenGenerator">Service to generate JWT tokens.</param>
-        public AuthController(JwtTokenGenerator jwtTokenGenerator, IAuthorizationService authorizationService)
+        public AuthController(IJwtTokenGenerator jwtTokenGenerator, IAuthorizationService authorizationService)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _authorizationService = authorizationService;

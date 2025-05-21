@@ -14,7 +14,12 @@ builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 
-builder.Services.AddSingleton(new JwtTokenGenerator(jwtSettings));
+builder.Services.AddSingleton<IJwtTokenGenerator>(new JwtTokenGenerator(jwtSettings));
+//OR
+//builder.Services.AddSingleton<IJwtTokenGenerator>(sp =>
+//{
+//    return new JwtTokenGenerator(jwtSettings);
+//});
 
 builder.Services.AddAuthentication(options =>
 {
