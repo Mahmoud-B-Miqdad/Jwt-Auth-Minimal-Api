@@ -12,14 +12,16 @@ namespace JwtAuthMinimalApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtTokenGenerator _jwtTokenGenerator;
+        private readonly IAuthorizationService _authorizationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class.
         /// </summary>
         /// <param name="jwtTokenGenerator">Service to generate JWT tokens.</param>
-        public AuthController(JwtTokenGenerator jwtTokenGenerator)
+        public AuthController(JwtTokenGenerator jwtTokenGenerator, IAuthorizationService authorizationService)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
+            _authorizationService = authorizationService;
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace JwtAuthMinimalApi.Controllers
                 return BadRequest("Username and password are required");
             }
 
-            if (request.Username == "admin" && request.Password == "1234")
+            if (_authorizationService.ValidateCredentials(request.Username, request.Password))
             {
                 var token = _jwtTokenGenerator.GenerateToken(request.Username);
                 return Ok(new { Token = token });

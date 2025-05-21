@@ -12,6 +12,8 @@ var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
 
 builder.Services.Configure<JwtSettings>(jwtSettingsSection);
 
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+
 builder.Services.AddSingleton(new JwtTokenGenerator(jwtSettings));
 
 builder.Services.AddAuthentication(options =>
